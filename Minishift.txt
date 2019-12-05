@@ -1,0 +1,86 @@
+Install Minishit -
+https://www.marksei.com/openshift-minishift-widnows/
+https://github.com/minishift/minishift/issues/1541
+
+After installation-
+The server is accessible via web console at:
+    https://172.17.194.243:8443/console
+
+You are logged in as:
+    User:     developer
+    Password: <any value>
+
+To login as administrator:
+    oc login -u system:admin
+
+Configure docker-
+https://docs.okd.io/latest/minishift/using/docker-daemon.html
+
+minishift config set hyperv-virtual-switch "Default Switch"
+minishift ip --set-static or minishift ip --set-dhcp
+minishift config set static-ip false
+
+minishift start --memory 8GB --cpus 4 --hyperv-virtual-switch "Default Switch" --vm-driver hyperv --show-libmachine-logs --iso-url "file://C:/Users/Saurabh Jain/.minishift/cache/iso/centos/v1.15.0/minishift-centos7.iso"  --skip-startup-checks true --skip-registry-check true --skip-registration --profile minishift
+
+#minishift start
+minishift docker-env
+minishift docker-env | Invoke-Expression
+kubectl config set-context minishift
+oc config set-context minishift
+--on restarting the minishift, if Openshift is not reachable run this command
+oc cluster up
+oc cluster up --base-dir /var/lib/minishift/base --loglevel=5
+minishift ssh -- ls /var/lib/minishift/base/openshift-apiserver
+
+minishift ssh -- docker container update origin -c 4096
+minishift ssh -- docker start origin
+//Run below commands as well
+-----Run the below commnds for login and authentication-------
+minishift addons apply admin-user
+oc login -u system:admin
+oc adm policy add-cluster-role-to-user cluster-admin admin
+oc login -u admin -p admin
+
+///OC command
+oc cluster down
+oc cluster status
+oc cluster up --public-hostname='ip adderss of switch'
+//docker  https://docs.docker.com/engine/reference/commandline/rm/
+docker delete container 'container uuid'
+docker rm --force 'containber uuid'
+//allstopped docker container
+docker rm $(docker ps -a -q)
+
+Reference implementation -- 
+https://dzone.com/articles/metadata-management-in-big-data-systems-a-complete-1?preview=true
+https://dzone.com/articles/istio-service-mesh-the-step-by-step-guide-part-2-t
+
+Minishift + Istio up and running - 
+https://itnext.io/minishift-istio-up-and-running-93bd125fe310
+
+istioinstallation
+https://redhat-developer-demos.github.io/istio-tutorial/istio-tutorial/1.3.x/1setup.html
+Create a new project
+oc new-project k8s-demo --description="Demo APIs on Kubernetes" --display-name="K8S Demo"
+
+After creating deployments and exposing service using oc
+oc expose svc userapi
+oc expose svc dataservice
+
+Samples- 
+https://istio.io/docs/examples/bookinfo/
+https://developers.redhat.com/topics/service-mesh/
+kubectl apply -f istio-crd.yaml -n istio-system
+
+manual side car injection
+istioctl kube-inject -f customer/kubernetes/Deployment.yml -n istio-tutorial | kubectl apply -f - 
+automatic side car injection
+using labels on the namespaces/projects
+kubectl label namespace bookinfo istio-injection=enabled
+#egress and ingress network ploicy
+https://docs.projectcalico.org/v3.5/getting-started/kubernetes/tutorials/advanced-policy
+
+
+
+
+

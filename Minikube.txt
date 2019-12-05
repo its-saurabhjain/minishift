@@ -1,0 +1,18 @@
+1. Install Minikube or K8S cluster
+2. Create Java rest api's (Frontend and backend apis) and test
+3. Create docker images for the apis and test the images, push the images to a image respository
+4. Create deployments for the apis
+kubectl run dataservice --image=itsaurabh/codestatebkend:v1 --port 8080 --labels="app=codestatebkend,tier=backend"
+kubectl run userapi --image=itsaurabh/codestate:v1 --port 8080 --labels="app=codestate,tier=frontend"
+5. Expose the frontend api as Loadbalancer
+kubectl expose deployment userapi --type=LoadBalancer --port 80 --target-port 8080
+6. Expose backend service as clusterip
+kubectl expose deployment dataservice --type=ClusterIP --port 80 --target-port 8080 --selector="app=codestatebkend,tier=backend"
+
+minikube service userapi
+-----------------------------------
+1. Envoy as front end proxy
+Use dynamic configurations -- either a general purpose control plane or a light weight one like Contour
+Using Contour
+Enable RABAC
+minikube start --extra-config=apiserver.Authorization.Mode=RBAC 
